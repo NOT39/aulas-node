@@ -1,34 +1,25 @@
-const pessoas = []
-
-// Bloco de código
-
-// function criarEAdicionarPessoa(argNome, argIdade = 0, argCpf = "Sem CPF") {
-//     const pessoa = {
-//         nome: argNome,
-//         idade: argIdade,
-//         cpf: argCpf
-//     }
-
-//     pessoas.push(pessoa)
-// }
-
-function somar2(num) {
-    const somaTotal = num + 2
-    return somaTotal
+function soma(num1, num2) {
+    return num1 + num2
 }
 
+function subtracao(num1, num2) {
+    return num1 - num2
+}
 
-// criarEAdicionarPessoa("Davi")
+function multiplicacao(num1, num2) {
+    return num1 * num2
+}
 
-// console.log("Alguma coisa no meio")
+function divisao(num1, num2) {
+    return num1 / num2
+}
 
-// criarEAdicionarPessoa("Not", 32, "000000000000")
-// criarEAdicionarPessoa()
+const minhaVariavel = 43
 
-// console.log(pessoas)
-
-const resultado = somar2(4)
-console.log(resultado)
-
-const outroResultado = somar2(8)
-console.log(outroResultado)
+module.exports = {
+    divisao,
+    soma,
+    multiplicacao,
+    subtracao,
+    minhaVariavel
+}

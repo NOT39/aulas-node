@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { StatusCodes } from "http-status-codes"
-import { prisma } from "index"
+import { prisma } from "../lib/prisma"
 import { z, ZodError } from "zod"
 
 export async function pegarUsuario(req: Request, res: Response) {

@@ -39,7 +39,7 @@ app.get('/usuarios', async (req, res) => {
     
 })
 
-app.get('/usuarios/:id', (req, res) => {
+app.get('/usuarios/:id', async (req, res) => {
     const pegarUsuarioRouteParamsSchema = z.object({
         id: z.string().uuid()
     })
@@ -60,7 +60,11 @@ app.get('/usuarios/:id', (req, res) => {
         throw err
     }
 
-    const usuario = usuarios.find((usuario) => usuario.id === id)
+    const usuario = await prisma.usuario.findUnique({
+        where: {
+            id
+        }
+    })
     
     if (!usuario) {
         return res.status(StatusCodes.NOT_FOUND).json({
@@ -111,32 +115,77 @@ app.post('/usuarios', async (req, res) => {
     }
 })
 
-app.put('/usuarios/:id', (req, res) => {
-    const { id } = req.params
-    const { name } = req.body
+app.put('/usuarios/:id', async (req, res) => {
+    const atualizarUsuarioRouteParamsSchema = z.object({
+        id: z.string().uuid()
+    })
 
-    const usuario = usuarios.find(valor => valor.id === id)
+    const atualizarUsuarioBodyParamsSchema = z.object({
+        nome: z.string().optional(),
+        email: z.string().optional(),
+        descricao: z.string().optional(),
+        avatar_url: z.string().url().optional(),
+        cover_url: z.string().optional()
+    })
+    
+    const { success: routeParamsValidationSuccess, data: params } = atualizarUsuarioRouteParamsSchema.safeParse(req.params)
 
-    if(!usuario) {
+    if (!routeParamsValidationSuccess) {
+        return res.status(400).json({message: 'ID precisa ser um UUID!'})
+    }
+
+    const { success: bodyParamsValidationSuccess, data: body } = atualizarUsuarioBodyParamsSchema.safeParse(req.body)
+
+    if (!bodyParamsValidationSuccess) {
+        return res.status(400).json({message: 'Erro de validação.'})
+    }
+
+    const usuarioExists = await prisma.usuario.findUnique({
+        where: {
+            id: params.id
+        }
+    })
+
+    if(!usuarioExists) {
         return res.status(400).json({message: "Usuário não encontrado."})
     }
 
-    usuario.name = name
+    const usuario = await prisma.usuario.update({
+        where: {
+            id: params.id
+        },
+        data: body
+    })
 
     return res.status(200).json({usuario})
 })
 
-app.delete('/usuarios/:id', (req, res) => {
-    // Route param
-    const { id } = req.params
+app.delete('/usuarios/:id', async (req, res) => {
+    const deletarUsuarioRouteParamsSchema = z.object({
+        id: z.string().uuid()
+    })
 
-    const indiceDoValorASerDeletado = usuarios.findIndex(usuario => usuario.id === id)
+    const { success: routeParamsValidationSuccess, data: params } = deletarUsuarioRouteParamsSchema.safeParse(req.params)
 
-    if (indiceDoValorASerDeletado < 0) {
+    if (!routeParamsValidationSuccess) {
+        return res.status(400).json({message: 'ID precisa ser um UUID!'})
+    }
+
+    const usuarioExists = await prisma.usuario.findUnique({
+        where: {
+            id: params.id
+        }
+    })
+
+    if(!usuarioExists) {
         return res.status(400).json({message: "Usuário não encontrado."})
     }
 
-    usuarios.splice(indiceDoValorASerDeletado, 1)
+    await prisma.usuario.delete({
+        where: {
+            id: params.id
+        }
+    })
     
     return res.status(204).send()
 })

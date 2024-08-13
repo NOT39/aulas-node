@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Usuario {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
 
   nome       String
   email      String @unique
@@ -27,7 +27,7 @@ model Usuario {
 }
 
 model Projeto {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
 
   titulo     String
   descricao  String
@@ -39,5 +39,5 @@ model Projeto {
   fl_fixed Boolean @default(false)
 
   usuario    Usuario @relation(fields: [usuario_id], references: [id])
-  usuario_id Int
+  usuario_id String
 }

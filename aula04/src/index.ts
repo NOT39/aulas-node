@@ -1,5 +1,5 @@
 import express from "express"
-import { usuariosRouter } from "routes/usuarios"
+import { usuariosRouter } from "./routes/usuarios"
 import cors from 'cors'
 
 const app = express()
